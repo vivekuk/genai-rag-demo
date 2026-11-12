@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>genai-rag-demo — RAG Chatbot</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+  h1 { font-size: 1.5rem; }
+  .hint { color: #555; font-size: 0.9rem; }
+  form { display: flex; gap: 0.5rem; margin: 1rem 0; }
+  input { flex: 1; padding: 0.6rem; font-size: 1rem; }
+  button { padding: 0.6rem 1rem; font-size: 1rem; cursor: pointer; }
+  #answer { background: #f4f4f4; padding: 1rem; border-radius: 8px; white-space: pre-wrap; }
+  .source { border: 1px solid #ddd; border-radius: 8px; padding: 0.75rem; margin-top: 0.75rem; }
+  .source h3 { margin: 0 0 0.25rem; font-size: 0.9rem; }
+  .source p { margin: 0; font-size: 0.9rem; color: #333; white-space: pre-wrap; }
+  .badge { display: inline-block; background: #e8f0fe; color: #174ea6; border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<h1>RAG Chatbot Demo</h1>
+<p class="hint">Ask a question about the sample documents (Northwind Outfitters policies,
+the AeroDesk Pro, returns, shipping). Answers are grounded in the documents
+and cite their sources. No paid API key is needed.</p>
+<p class="hint">Try: “What is the return policy?” · “How long does standard shipping take?”
+· “What is the weight limit of the AeroDesk Pro?”</p>
+<form id="ask-form">
+  <input id="question" type="text" placeholder="Ask a question…" required maxlength="500">
+  <button type="submit">Ask</button>
+</form>
+<div id="result" hidden>
+  <p><span class="badge" id="mode"></span></p>
+  <div id="answer"></div>
+  <h2>Sources</h2>
+  <div id="sources"></div>
+</div>
+<script>
+document.getElementById('ask-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const question = document.getElementById('question').value;
+  const res = await fetch('/ask', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({question}),
+  });
+  const data = await res.json();
+  document.getElementById('result').hidden = false;
+  document.getElementById('mode').textContent =
+    data.mode === 'llm' ? 'Answer: LLM (grounded in retrieved sources)'
+                         : 'Answer: extractive — quoted from the retrieved sources (no LLM configured)';
+  document.getElementById('answer').textContent = data.answer;
+  document.getElementById('sources').innerHTML = data.sources.map(s =>
+    `<div class="source"><h3>${s.source} (score ${s.score})</h3><p>${s.content}</p></div>`
+  ).join('');
+});
+</script>
+</body>
+</html>
