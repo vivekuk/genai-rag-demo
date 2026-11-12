@@ -1,0 +1,26 @@
+# Core dependencies — everything the demo needs to run.
+# Versions below are the ones installed and verified in this repo
+# (Python 3.12). Looser pins (>=) also work; these exact pins are the
+# tested combination.
+fastapi==0.162.5
+uvicorn==0.54.0
+langchain==1.5.0
+langchain-community==0.4.2
+langchain-text-splitters==1.1.3
+faiss-cpu==1.16.0
+scikit-learn==1.9.1
+httpx==0.28.1
+
+# Development / tests.
+pytest==9.2.0
+
+# Optional — semantic embeddings (recommended upgrade).
+# Install these to use sentence-transformer embeddings instead of the
+# built-in TF-IDF fallback (needs torch, ~2 GB download):
+#   pip install sentence-transformers langchain-huggingface
+# sentence-transformers==3.4.1
+# langchain-huggingface==0.1.2
+
+# Optional — LLM answer mode. Set OPENAI_API_KEY in your environment;
+# no key is hardcoded anywhere.
+# openai==1.59.6

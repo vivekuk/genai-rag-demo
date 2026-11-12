@@ -1,0 +1,8 @@
+services:
+  rag-demo:
+    build: .
+    ports:
+      - "8000:8000"
+    # Optional: uncomment and set your key to enable LLM answer mode.
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
